@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<head>
+	<title>MultiPong de ENTI</title>
+	<script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+</head>
+
+<body>
+	<script>
+	let game_w = 800;
+	let game_h = 450;
+
+	let config = {
+		type: Phaser.AUTO,
+		width: game_w,
+		height: game_h,
+		scene: {
+			create: create_scene,
+			update: update_scene
+		},
+		physics: {
+			default: 'arcade' ,
+			arcade: {
+				debug: true
+			}
+		}
+	}
+
+	let game = new Phaser.Game(config);
+	
+	//Players
+	let player1;
+	let player1_color = 0xffffff;
+	let player2;
+	let player2_color = 0xffffff;
+
+	let player_speed = 2;
+	let player_margin = 32;
+	let player_w = 16;
+	let player_h = 160;
+
+	//Ball
+	let ball;
+	let ball_w = 16;
+	let ball_color = 0xFF9A00;
+	let ball_speed = 2;
+	let ball_angle = 0;
+	let ball_x_dir = 1;
+	let ball_y_dir = 1;
+
+	//Keys
+	let key_up;
+	let key_down;
+
+	//Start
+	function create_scene(){
+		let screen_center_w = game_w / 2;
+		let screen_center_h = game_h / 2;
+
+		player1 = this.add.rectangle(player_margin, screen_center_h, player_w, player_h, player1_color);
+		player2 = this.add.rectangle(game_w-player_margin, screen_center_h, player_w, player_h, player2_color);
+		
+		ball = this.add.rectangle(screen_center_w, screen_center_h, ball_w, ball_w, ball_color);
+		ball_angle = Math.floor(Math.random()*360)*Math.PI/180;
+
+		key_up = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+		key_down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+	}
+
+	//Update
+	function update_scene(){
+		//Player
+		if(key_up.isDown && player1.y > player_h / 2){
+			player1.y -= player_speed;
+		}
+		else if(key_down.isDown && player1.y < game_h - player_h / 2){
+			player1.y += player_speed;
+		}
+		
+		//Ball
+		if (ball.x >= game_w - ball_w || ball.x <= 0) {
+		    ball_x_dir = -ball_x_dir;
+			ball_speed += 0.3;
+		}
+		if (ball.y >= game_h - ball_w || ball.y <= 0) {
+		    ball_y_dir = -ball_y_dir;
+			ball_speed += 0.3;
+		}
+		ball.x += ball_x_dir * ball_speed * Math.cos(ball_angle);
+		ball.y += ball_y_dir * ball_speed * Math.sin(ball_angle);
+
+		//Collisions
+
+	}
+	</script>
+</body>
+
+</html>
